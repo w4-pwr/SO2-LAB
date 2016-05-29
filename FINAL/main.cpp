@@ -8,6 +8,13 @@
 #include <errno.h>
 #include <unistd.h>
 using namespace std;
+
+//    _______________  __  ___________________
+//   / ___/_  __/ __ \/ / / / ____/_  __/ ___/
+//   \__ \ / / / /_/ / / / / /     / /  \__ \
+//  ___/ // / / _, _/ /_/ / /___  / /  ___/ /
+// /____//_/ /_/ |_|\____/\____/ /_/  /____/
+
 struct bus {
 	//-1 jedzie w lewo
 	// 1 jedzie w prawo
@@ -36,6 +43,11 @@ struct mechanic {
     int station;
 };
 
+//    __________  _   _____________   _    _____    ____  _______    ____  __    ___________
+//   / ____/ __ \/ | / / ___/_  __/  | |  / /   |  / __ \/  _/   |  / __ )/ /   / ____/ ___/
+//  / /   / / / /  |/ /\__ \ / /     | | / / /| | / /_/ // // /| | / __  / /   / __/  \__ \
+// / /___/ /_/ / /|  /___/ // /      | |/ / ___ |/ _, _// // ___ |/ /_/ / /___/ /___ ___/ /
+// \____/\____/_/ |_//____//_/       |___/_/  |_/_/ |_/___/_/  |_/_____/_____/_____//____/
 
 #define PASSAGNERS_COUNT 5
 #define BOARD_HEIGHT 50
@@ -62,6 +74,12 @@ struct mechanic mechanics[MECHANIC_COUNT];
 
 bool finish = false;
 
+//     ____  ________  ______  _________    ____  _____
+//    / __ \/_  __/ / / / __ \/ ____/   |  / __ \/ ___/
+//   / /_/ / / / / /_/ / /_/ / __/ / /| | / / / /\__ \
+//  / ____/ / / / __  / _, _/ /___/ ___ |/ /_/ /___/ /
+// /_/     /_/ /_/ /_/_/ |_/_____/_/  |_/_____//____/
+
 
 pthread_t passangerThread[PASSAGNERS_COUNT];
 pthread_t mechanicThread[MECHANIC_COUNT];
@@ -79,18 +97,11 @@ pthread_mutex_t repairMutex  = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t repairCond = PTHREAD_COND_INITIALIZER;
 pthread_cond_t mechanicCond = PTHREAD_COND_INITIALIZER;
 
-bool freeLeftPlaform = true;
-bool freeRightPlaform = true;
-
-void cleanBoard()
-{
-	int i,j;
-	for(i = 0; i < BOARD_WIDTH; i++) {
-		for(j = 0; j < BOARD_HEIGHT; j++) {
-			board[i][j].status = 0;
-		}
-	}
-}
+//     ____  ____  ___ _       _______   ________
+//    / __ \/ __ \/   | |     / /  _/ | / / ____/
+//   / / / / /_/ / /| | | /| / // //  |/ / / __
+//  / /_/ / _, _/ ___ | |/ |/ // // /|  / /_/ /
+// /_____/_/ |_/_/  |_|__/|__/___/_/ |_/\____/
 
 void drawStation(int x, int y, int width, int height, char *name) {
     //poziome linie
@@ -134,13 +145,14 @@ void drawBus(){
 		int y = busArray[i].y;
 		move(railwayY,x);
 
-		int capacity = busArray[i].capacity;
-		int j;
-		for(j = 0; j < capacity; j++){
-			printw("@");
-		}
+		// int capacity = busArray[i].capacity;
+		// int j;
+		// for(j = 0; j < capacity; j++){
+		// 	printw("@");
+		// }
+		printw("@");
 
-		mvprintw(i, 0, "Bus %d - endurance: %d", i,  busArray[i].endurance);	
+		//mvprintw(i, 0, "Bus %d - endurance: %d", i,  busArray[i].endurance);	
 
 
 	}
@@ -157,23 +169,30 @@ void drawRailway() {
     hline('=', distanceX);
 }
 
-void draw() {
-	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_BLUE);
-	pthread_mutex_lock(&drawMutex);
+void *drawThreadWrapper(void *arg) {
+	while(finish != true){
+		pthread_mutex_lock(&drawMutex);
 
-	drawStation(stationA_X, stationA_Y, stationA_W, stationA_H, "Station A");
-    drawStation(stationB_X, stationB_Y, stationB_W, stationB_H, "Station B");
-    drawPassangers();
-    drawMechanics();
-	drawRailway();
-	drawBus();
+		erase();
+		drawStation(stationA_X, stationA_Y, stationA_W, stationA_H, "Station A");
+	    drawStation(stationB_X, stationB_Y, stationB_W, stationB_H, "Station B");
+	    drawPassangers();
+	    drawMechanics();
+		drawRailway();
+		drawBus();
+		refresh();
 
-	move(0,0);
-	refresh();
-
-	pthread_mutex_unlock(&drawMutex);
+		pthread_mutex_unlock(&drawMutex);
+	}
+	pthread_exit(NULL);
 }
+
+//     ____  __  _______    ________  ______  _________    ____
+//    / __ )/ / / / ___/   /_  __/ / / / __ \/ ____/   |  / __ \
+//   / __  / / / /\__ \     / / / /_/ / /_/ / __/ / /| | / / / /
+//  / /_/ / /_/ /___/ /    / / / __  / _, _/ /___/ ___ |/ /_/ /
+// /_____/\____//____/    /_/ /_/ /_/_/ |_/_____/_/  |_/_____/
+
 
 void busUpdate(void *arg) {
 	struct bus* mBus = (struct bus*)arg;
@@ -215,10 +234,46 @@ void busUpdate(void *arg) {
 
 }
 
+
+
+void *busThreadWrapper(void *arg) {
+	struct bus* mBus = (struct bus*)arg;
+	while(finish != true){
+
+		pthread_mutex_lock(&repairMutex);
+		usleep(80*1000);
+		busUpdate(mBus);
+		pthread_mutex_unlock(&repairMutex);
+	}
+	pthread_exit(NULL);
+}
+
+//     ____  ___   __________ ___    _   __________________     ________  ______  _________    ____
+//    / __ \/   | / ___/ ___//   |  / | / / ____/ ____/ __ \   /_  __/ / / / __ \/ ____/   |  / __ \
+//   / /_/ / /| | \__ \\__ \/ /| | /  |/ / / __/ __/ / /_/ /    / / / /_/ / /_/ / __/ / /| | / / / /
+//  / ____/ ___ |___/ /__/ / ___ |/ /|  / /_/ / /___/ _, _/    / / / __  / _, _/ /___/ ___ |/ /_/ /
+// /_/   /_/  |_/____/____/_/  |_/_/ |_/\____/_____/_/ |_|    /_/ /_/ /_/_/ |_/_____/_/  |_/_____/
+
 void passangerUpdate() {
 	
 
 }
+
+
+void *passangerThreadWrapper(void *arg) {
+	while(finish != true){
+		usleep(80*1000);
+		passangerUpdate();
+	}
+	return NULL;
+}
+
+//     __  _________________  _____    _   ____________   ________  ______  _________    ____
+//    /  |/  / ____/ ____/ / / /   |  / | / /  _/ ____/  /_  __/ / / / __ \/ ____/   |  / __ \
+//   / /|_/ / __/ / /   / /_/ / /| | /  |/ // // /        / / / /_/ / /_/ / __/ / /| | / / / /
+//  / /  / / /___/ /___/ __  / ___ |/ /|  // // /___     / / / __  / _, _/ /___/ ___ |/ /_/ /
+// /_/  /_/_____/\____/_/ /_/_/  |_/_/ |_/___/\____/    /_/ /_/ /_/_/ |_/_____/_/  |_/_____/
+
 
 void mechanicUpdate(){
 	pthread_mutex_lock(&mechanicMutex);
@@ -236,7 +291,7 @@ void mechanicUpdate(){
 		pthread_cond_wait(&mechanicCond, &mechanicMutex);
 	}
 
-	for(i = 0; i < 4; i++){
+	for(i = 0; i < ; i++){
 		usleep(80*1000);
 		mechanics[0].y++;
 		refresh();
@@ -249,34 +304,6 @@ void mechanicUpdate(){
 	pthread_mutex_unlock(&mechanicMutex);
 }
 
-void *drawThreadWrapper(void *arg) {
-	while(finish != true){
-		clear();
-		draw();
-	}
-	return NULL;
-}
-
-void *busThreadWrapper(void *arg) {
-	struct bus* mBus = (struct bus*)arg;
-	while(finish != true){
-
-		pthread_mutex_lock(&repairMutex);
-		usleep(80*1000);
-		busUpdate(mBus);
-		pthread_mutex_unlock(&repairMutex);
-	}
-	return NULL;
-}
-
-void *passangerThreadWrapper(void *arg) {
-	while(finish != true){
-		usleep(80*1000);
-		passangerUpdate();
-	}
-	return NULL;
-}
-
 void *mechanicThreadWrapper(void *arg) {
 	while(finish != true){
 		usleep(5000*1000);
@@ -284,6 +311,13 @@ void *mechanicThreadWrapper(void *arg) {
 	}
 	return NULL;
 }
+
+//    _____ ______________  ______
+//   / ___// ____/_  __/ / / / __ \
+//   \__ \/ __/   / / / / / / /_/ /
+//  ___/ / /___  / / / /_/ / ____/
+// /____/_____/ /_/  \____/_/
+
 
 void setup()
 {
@@ -315,6 +349,12 @@ void setup()
 	mechanics[1].y = stationB_Y+1;
 	mechanics[1].station = 2;
 }
+
+//     __  ______    _____   __
+//    /  |/  /   |  /  _/ | / /
+//   / /|_/ / /| |  / //  |/ /
+//  / /  / / ___ |_/ // /|  /
+// /_/  /_/_/  |_/___/_/ |_/
 
 int main(void) {
 	initscr();
