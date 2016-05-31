@@ -1,0 +1,33 @@
+#!/bin/bash
+echo "Zadanie 1"
+
+#readlink -f
+#wycinanie z łańcuchów cut od pozycji do pozycji lub zdefiniować -d znacznik pola i podawać od pola do pola
+#dirname - usuwa ostatni człon ze ścieżki
+#basename - usuwa wszytsko przed ostatnim członem ścieżki
+
+#ZADANIE W zadanym katalogu zamienić dowiązania symbliczne do plików regularnych w tym katalogu na dowiązania twarde.
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+cd $1
+
+for x in *
+do
+if [[ -h $x ]]
+then
+y=$(readlink -f $x)
+
+if [ "$(dirname $y)" == "$(dirname $x)" ] 
+then
+rm $x
+ln $y $x
+fi
+fi
+done
+fi

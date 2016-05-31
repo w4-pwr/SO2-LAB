@@ -1,0 +1,12 @@
+
+$zmienn
+@tablica
+%kewy-value
+
+$tab[2]
+$map{klucz}
+@ARGV 
+$_
+
+while(<PLIK>)
+wczytuje do zmiennej domyslne 

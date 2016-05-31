@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+#W zadanym pliku tekstowym znaleźć odwołania literaturowe 
+#np. [1], [2,3], [1,7,12] i wyświetlić je
+
+open(PLIK, "<", $ARGV[0]) or die "Nie mozna otworzyc pliku";
+
+my $n = $ARGV[1];
+
+while(<PLIK>)
+{
+   my $linia = $_;
+
+   while ($linia =~ /\[[\d,]*\]/g) {
+    print "$&\n";
+    }
+}
+close(PLIK);

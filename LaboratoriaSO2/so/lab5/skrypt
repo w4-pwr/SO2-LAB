@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#$NF - ostatnie pole
+
+# Wyświetlić plik tekstowy w ten sposób, że każde zdanie w nowej linii i wyświetlamy pierwsze 3 słowa. Nie pokazujemy pustych linii.
+# Zdanie ma minimum 2 słowa i na końcu znak ./!/?. Jeżeli mniej niż 2 słowa, to traktujemy jako część zdania poprzedniego. 
+#Rówież 0 słów i kropka to część poprzedniego zdania.
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -f $1 ]]
+then
+
+cat $1 | tr '\n' ' ' | awk '/^\s*$/ {next;} { gsub(/\. +/, ".\n"); gsub(/\? +/, ".\n"); gsub(/\! +/, ".\n"); print }' | awk '{if(length($2) == 0 )?????? }' |awk '{print $1, $2, $3}'
+
+fi

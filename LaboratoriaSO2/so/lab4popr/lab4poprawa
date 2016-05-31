@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#W zadanym drzewie katalogów znaleźć katalogi zawierające więcej
+#plików regularnych niż podkatalogów
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+
+find $1 -type d | while read wynik 
+do
+
+if [ $(ls $wynik -l | grep "^[^dlsbpD]" | tail -n +2 | wc -l) -gt $(ls $wynik -l | grep "^d" | wc -l) ]
+then
+echo $wynik
+fi
+
+done
+
+fi

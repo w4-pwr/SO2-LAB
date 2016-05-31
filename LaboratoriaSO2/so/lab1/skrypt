@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo "Zadanie 7"
+#Przesuwanie wszystkich plików z ustawionym prawem wykonywania z jednego katalogu do
+#drugiego. Pozostałe pliki w katalogu nie powinny być ruszane. Nazwy katalogów,
+#źródłowego i docelowego, zadawane jako parametry skryptu
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+if [[ -d $1 ]]
+then
+cd $1
+
+for x in *
+do
+if [[ -f $x ]]
+then
+if [[ -x $x ]]
+then
+if [[ -d $2 ]]
+then
+mv $x $2
+fi
+fi
+fi
+done
+fi
+fi

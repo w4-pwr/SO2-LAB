@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#Wyświetlić odwołania literaturowe w zadanym pliku tekstowym. Format: (nazwisko rok)
+
+
+if [ $# -lt 1 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -f $1 ]]
+then
+cat $1 | tr '.' '\n' | awk -F'[()]' '/[a-zA-Z]*\s[0-9]{4,}/ {print $2}'
+fi

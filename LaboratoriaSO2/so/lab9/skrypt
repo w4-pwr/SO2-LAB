@@ -1,0 +1,38 @@
+#!/usr/bin/perl -w
+
+#W zadanym drzewie katalogów znaleźć pliki regularne, w których nazwie bez rozszerzeń 
+#nie jest zawarte ostatnie rozszerzenie np. alama.la.ma.xx <- bierzemy pod uwagę tylko
+#ostatnie rozszerzenie
+
+use File::Find;
+
+if ( @ARGV )
+{
+
+if ( -d $ARGV[0] )
+{
+find (\&kod, $ARGV[0] );
+
+sub kod
+{
+if ( -f $_ )
+{
+
+if ( $_ !~ /.+(\..*+$)\..+/i )
+{
+print $File::Find::name;
+print "\n";
+}
+
+}
+
+}
+
+}
+
+}
+else
+{
+print "Brak argumentów\n";
+}
+

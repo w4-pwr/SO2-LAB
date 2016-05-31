@@ -1,0 +1,42 @@
+#!/bin/bash
+
+echo "Skrypt 2"
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+
+if [[ -d $1 ]]
+then
+cd $1
+a=$(ls -al | grep ^-)
+fi
+
+if [[ -d $2 ]]
+then
+cd $2
+b=$(ls -al | grep ^-)
+fi
+
+if [[ -d $3 ]]
+then
+cd $3
+c=$(ls -al | grep ^-)
+fi
+
+for x in $1
+do
+for y in $2
+do
+for z in $3
+do
+if [ $x -eq $y ]
+then
+if [ $x -eq $z ]
+then
+echo $x
+fi
+fi
+done
+done
+done
+fi

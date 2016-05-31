@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#W zadanym drzewie katalogów znaleźć pliki regularne nowsze niż 10 minut, do których właściciel nie ma prawa zapisu ani wykonania, a grupa lub inni mają prawo zapisu i wykonania.
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+
+find $1 -type f -cmin -10 ! -perm /300  \( -perm -033 -o -perm -003 -o -perm -030 \)  -print
+
+fi

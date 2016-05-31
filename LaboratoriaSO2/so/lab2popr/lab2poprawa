@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#W zadanym katalogu skasować wszystkie dowiązania symboliczne do plików
+#w tym katalogu.
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+cd $1
+
+for x in *
+do
+if [[ -h $x ]]
+then
+y=$(readlink -f $x)
+z=$(pwd -P)
+
+if [ $(dirname $y) == $z ] 
+then
+rm $x
+echo "Skasowano dowiązanie $x wskazujące na $y"
+fi
+fi
+done
+fi
+

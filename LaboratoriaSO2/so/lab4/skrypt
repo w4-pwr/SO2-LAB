@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#W drzewie katalogów zadanym pierwszym parametrem znaleźć dowiązania symboliczne wskazujące na te same pliki regularne.
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+find $1 -type l | readlink $(tee) -f | (while read var1
+do
+
+if [[ -f $var1 ]]
+then
+echo $var1
+fi
+
+done) | (while read var2
+
+do
+find $1 -type l | readlink $(tee) -f | (while read var3
+do
+
+if [[ -f $var3 ]]
+then
+if [ "$var3" == "$var2" ]
+then
+echo  "Dowiązania wskazuja na ten sam plik "
+echo "$var3"
+fi
+fi
+done)
+
+done)
+
+
+fi

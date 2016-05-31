@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#^ - początek linii  $-koniec linii
+#W zadanym drzewie katalogów znaleźć pliki regularne, które na początku nazwy mają literę a na końcu mają co najmniej 2 cyfry.
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+
+find $1 -type f -printf "%f\n" | awk '/^[[:alpha:]].*[0-9]{2,}$/ { print }' |
+
+fi

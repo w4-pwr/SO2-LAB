@@ -1,0 +1,48 @@
+#!/usr/bin/perl -w
+
+#W zadanym katalogu (NIE DRZEWIE KATALOGÓW!) wylistować dowiązania symboliczne wskazujące
+#na katalogi, do których ktoś (właściciel lub grupa lub inni) nie ma prawa wykonania.
+
+use Cwd 'abs_path';
+
+if ( @ARGV )
+{
+
+if ( -d $ARGV[0] )
+{
+
+
+opendir my($dh), $ARGV[0] or die "Błąd odczytu': $!";
+my @files = readdir $dh;
+closedir $dh;
+
+$number = @files;
+
+for (my $i=0; $i <= $number; $i++)
+{
+
+if ( -l $files[$i] )
+{
+if ( -d readlink $files[$i] && not -x readlink $files[$i])
+{
+print abs_path($files[$i]);
+print "\n";
+
+}
+
+}
+
+
+}
+
+
+}
+
+
+}
+else
+{
+print "Brak argumentów\n";
+}
+
+#

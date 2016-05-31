@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#Dla zadanego pliku tekstowego wyświetlić zawartość zastępując 
+#znaki tabulacji odpowiednią liczbą spacji tak, by tekst wyrównał się
+#do najbliższej kolumny tabulacji. Szerokość kolumny zadawana jako argument
+
+
+if [ $# -lt 2 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -f $1 ]]
+then
+kolumna=$2
+
+cat $1 | awk -F\t '{ for (i = 0; i <= NF; i++){ dlwyr=$(length($1)); lspacji=((30-dlwyr)); gsub(/\t/, ""); print $1; for (j=0; j<= lspacji; j++){ print lspacji } } }'
+
+fi

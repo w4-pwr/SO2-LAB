@@ -1,0 +1,20 @@
+#!/bin/bash
+#perm trzeba użyć i więcej niż 1
+#printf - tak jak w c
+#dirname, basename, cut
+
+#W zadanym drzewie katalogów znaleźć pliki regularne o wielkości mniejszej niż 100 B do których właściciel nie ma prawa zapisu ani wykonania, 
+#grupa lub inni mają prawo zapisu i wykonania
+
+if [ $# -eq 0 ]
+then
+echo "Brak argumentów"
+fi
+
+if [[ -d $1 ]]
+then
+
+
+find "$1" -type f -size -100c \( -perm 0474 -o -perm 0443 -o -perm 0404 -o -perm 0407 -o -perm 0403 -o -perm 0470 -o perm 0447 -o -perm 0434 -o -perm 0430 \) -print
+
+fi

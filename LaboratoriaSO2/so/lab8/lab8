@@ -1,0 +1,38 @@
+#!/usr/bin/perl -w
+
+#W zadanym drzewie katalogów znaleźć dowiązania symboliczne wskazujące
+#na obiekty, których nazwy (OBIKETÓW, NIE ŚCIEŻEK) zawierają co najmniej 2
+#małe litery "a"
+
+use File::Find;
+
+if ( @ARGV )
+{
+
+if ( -d $ARGV[0] )
+{
+find (\&kod, $ARGV[0] );
+
+sub kod
+{
+if ( -l $_ )
+{
+my @tmp = split('/', readlink $_);
+if ( $tmp[-1] =~ /a{2,}/ )
+{
+print $File::Find::name;
+print "\n";
+}
+
+}
+
+}
+
+}
+
+}
+else
+{
+print "Brak argumentów\n";
+}
+

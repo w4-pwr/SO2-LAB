@@ -1,0 +1,51 @@
+#!/usr/bin/perl -w
+
+#W zadanym katalogu znaleźć dowiązania symboliczne wskazujące
+# na obiekty nazywające się tak samo, jak dowiązanie,
+# do których właściciel ma prawo wykonania
+
+if ( @ARGV )
+{
+
+if ( -d $ARGV[0] )
+{
+
+
+opendir my($dh), $ARGV[0] or die "Błąd odczytu': $!";
+my @files = readdir $dh;
+closedir $dh;
+
+$number = @files;
+
+for (my $i=0; $i <= $number; $i++)
+{
+
+if ( -l $files[$i] )
+{
+my @tmp = split('/', readlink -f $files[$i]);
+
+if ( $tmp[-1] eq $files[$i] )
+{
+if ( -x readlink -f $files[$i] )
+{
+print "$files[$i]";
+}
+
+}
+
+
+}
+
+
+}
+
+
+}
+
+
+}
+else
+{
+print "Brak argumentów\n";
+}
+
